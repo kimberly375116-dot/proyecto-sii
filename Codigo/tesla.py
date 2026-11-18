@@ -1,6 +1,11 @@
+
 import random
 
 class Carretera:
+    # Ubicacion de la simulacion
+    UBICACION = "Cocula, Jalisco"
+    ESCENARIO = "Zona urbana de Cocula"
+
     DISTANCIA_SEGURA = 20
     DISTANCIA_PELIGRO = 8
 
@@ -21,7 +26,7 @@ class Carretera:
         return self.percepcion()
 
     def percepcion(self):
-        # Simular lo que observan las camaras
+        # Camaras del vehiculo en las calles de Cocula
         return {
             "t": self.t,
             "distancia": round(
@@ -32,7 +37,7 @@ class Carretera:
         }
 
     def paso(self, frenar):
-        # Simular cambios en la carretera
+        # Simular situaciones de transito en Cocula
         self.obstaculo = self.azar.random() < 0.10
         self.carril_visible = self.azar.random() > 0.10
 
@@ -42,13 +47,12 @@ class Carretera:
         else:
             self.velocidad = min(80, self.velocidad + 2)
 
-        # La distancia cambia segun la velocidad
+        # Cambios en la distancia del vehiculo
         if frenar:
             self.distancia += 5
         else:
             self.distancia -= self.velocidad * 0.08
 
-        # Mantener la distancia dentro de limites
         self.distancia = max(0, min(50, self.distancia))
 
         # Penalizar situaciones peligrosas
@@ -64,12 +68,11 @@ class Carretera:
         return self.percepcion(), self.t >= self.pasos
 
     def desempeno(self):
-        # Una puntuacion menor significa un mejor resultado
         return self.penalizacion + self.frenados
 
 
 class AgenteReactivo:
-    # Decide solamente con lo que observa en ese momento
+    # Decide utilizando solamente la informacion actual
 
     def actuar(self, percepcion):
         if percepcion["distancia"] < 15:
@@ -82,7 +85,7 @@ class AgenteReactivo:
 
 
 class AgenteConModelo:
-    # Recuerda informacion de los pasos anteriores
+    # Recuerda informacion de pasos anteriores
 
     def __init__(self):
         self.distancia_anterior = None
@@ -93,16 +96,13 @@ class AgenteConModelo:
         obstaculo = percepcion["obstaculo"]
         carril_visible = percepcion["carril_visible"]
 
-        # Detectar si el vehiculo se esta acercando demasiado
         se_acerca = False
 
         if self.distancia_anterior is not None:
             se_acerca = distancia < self.distancia_anterior
 
-        # Recordar la distancia actual
         self.distancia_anterior = distancia
 
-        # Decidir si es necesario frenar
         if obstaculo:
             self.frenar_antes = True
             return True
@@ -115,7 +115,6 @@ class AgenteConModelo:
             self.frenar_antes = True
             return True
 
-        # Si el carril no se ve, actuar con precaucion
         if not carril_visible:
             self.frenar_antes = True
             return True
@@ -142,8 +141,13 @@ def correr(agente_clase, semilla, pasos=60):
 
 
 def comparar(pasos=60, repeticiones=20):
-    print("SIMULACION DEL SISTEMA INTELIGENTE DE TESLA")
+    print("=" * 60)
+    print(" SISTEMA INTELIGENTE DE CONDUCCION TESLA")
+    print(" UBICACION: COCULA, JALISCO")
+    print(" ESCENARIO: ZONA URBANA")
+    print("=" * 60)
     print()
+
     print(f"{'Agente':18s} {'Puntuacion':>12s} "
           f"{'Colisiones':>12s} {'Frenados':>10s}")
     print("-" * 56)
@@ -165,6 +169,9 @@ def comparar(pasos=60, repeticiones=20):
 
         print(f"{nombre:18s} {puntuacion:12.1f} "
               f"{colisiones:12.2f} {frenados:10.2f}")
+
+    print()
+    print("Simulacion finalizada en Cocula, Jalisco.")
 
 
 if __name__ == "__main__":
