@@ -1,18 +1,14 @@
-
 import json
-
 
 def corte_trapezoidal(a, b, c, d, alfa):
     izquierda = a + alfa * (b - a)
     derecha = d - alfa * (d - c)
     return izquierda, derecha
 
-
 def corte_triangular(a, b, c, alfa):
     izquierda = a + alfa * (b - a)
     derecha = c - alfa * (c - b)
     return izquierda, derecha
-
 
 def calcular_cortes(datos):
     conjuntos = datos["conjuntos_difusos"]
